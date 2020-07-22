@@ -2,6 +2,11 @@
 A Nonlocal Feature-Driven Exemplar-Based Approach For Image Inpainting
 
 
+## Installation
+```
+source ./install.sh
+```
+
 ## Citation
 ```
 @misc{reshniak2019nonlocal,
