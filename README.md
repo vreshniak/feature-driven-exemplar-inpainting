@@ -2,7 +2,7 @@
 A Nonlocal Feature-Driven Exemplar-Based Approach For Image Inpainting
 
 
-### Citation
+## Citation
 ```
 @misc{reshniak2019nonlocal,
     title={A nonlocal feature-driven exemplar-based approach for image inpainting},
