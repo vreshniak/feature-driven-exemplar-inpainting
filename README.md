@@ -3,7 +3,7 @@ A Nonlocal Feature-Driven Exemplar-Based Approach For Image Inpainting
 
 
 ### Citation
-
+```
 @misc{reshniak2019nonlocal,
     title={A nonlocal feature-driven exemplar-based approach for image inpainting},
     author={Viktor Reshniak and Jeremy Trageser and Clayton G. Webster},
@@ -12,3 +12,4 @@ A Nonlocal Feature-Driven Exemplar-Based Approach For Image Inpainting
     archivePrefix={arXiv},
     primaryClass={cs.CV}
 }
+```
