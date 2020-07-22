@@ -72,8 +72,8 @@ class feature:
 
 		# choose algorithm for the nearest neighbors search
 		self.nn_algorithm = nn_algorithm
-		if self.nn_algorithm!='PatchMatch':
-			print('Warning: '+self.nn_algorithm+' will work only with scalar lambdas')
+		# if self.nn_algorithm!='PatchMatch':
+		# 	print('Warning: '+self.nn_algorithm+' will work only with scalar lambdas')
 
 		# explicit nnf field if given
 		self.nnf_field = nnf_field
