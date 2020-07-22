@@ -1,0 +1,4 @@
+output
+lib
+*debug*
+__pycache__
