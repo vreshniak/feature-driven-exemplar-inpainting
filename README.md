@@ -1,10 +1,9 @@
-# exemplar-feature-inpainting
 A Nonlocal Feature-Driven Exemplar-Based Approach For Image Inpainting
 
 
 ## Installation
 ```
-source ./install.sh
+source ./install.sh [install_path]
 ```
 
 ## Citation
