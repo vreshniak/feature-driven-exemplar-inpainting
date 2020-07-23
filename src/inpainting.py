@@ -57,7 +57,7 @@ def read_image(img, as_gray):
 class inpainting:
 
 	# def __init__(self, image_file_name, mask_file_name, source_mask_file_name=None, as_gray=False, kernels=None, lambdas=None, patch_shape=(3,3), patch_weight=None, patch_sigma=None):
-	def __init__(self, image, mask, source_mask=None, as_gray=False, kernels=None, lambdas=None, patch_shape=(3,3), patch_weight=None, patch_sigma=None, nn_algorithm=None, nnf_field=None):
+	def __init__(self, image, mask, source_mask=None, as_gray=False, kernels=None, lambdas=None, patch_shape=(3,3), patch_weight=None, patch_sigma=None, nn_algorithm='PatchMatch', nnf_field=None):
 		self.caller_path = os.path.dirname(os.path.abspath(inspect.getmodule(inspect.stack()[1][0]).__file__))
 
 		# note that image has three dimensions and we use CHANNELS FIRST
@@ -485,7 +485,7 @@ class inpainting:
 		return np.mean(np.abs(delta))
 
 
-	def add_feature(self, target_mask, source_mask=None, patch_shape=(3,3), patch_weight=None, patch_sigma=None, initialization=None, lambdas=None, beta=None, nn_algorithm=None, nnf_field=None):
+	def add_feature(self, target_mask, source_mask=None, patch_shape=(3,3), patch_weight=None, patch_sigma=None, initialization=None, lambdas=None, beta=None, nn_algorithm='PatchMatch', nnf_field=None):
 		lambdas = [1]*self.num_filters if lambdas is None else lambdas
 		assert len(lambdas)==self.num_filters, "len(lambdas) for each feature must be equal to self.num_filters"
 		patch_weight = op.gauss_weight(patch_shape,patch_sigma=patch_sigma) if patch_sigma is not None else patch_weight
