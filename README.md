@@ -1,7 +1,10 @@
 A Nonlocal Feature-Driven Exemplar-Based Approach For Image Inpainting
 
 ## Requirements
+gcc
+
 imagemagick
+
 
 ## Installation
 ```
