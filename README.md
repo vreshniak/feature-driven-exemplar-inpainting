@@ -1,7 +1,7 @@
 # A Nonlocal Feature-Driven Exemplar-Based Approach For Image Inpainting
 ### [arXiv](https://arxiv.org/abs/1909.09301)
 
-This is the implementation of our our paper on Feature-Driven Exemplar-Based image inpainting
+This is the implementation of our paper on Feature-Driven Exemplar-Based image inpainting
 
 ## Requirements
 gcc
