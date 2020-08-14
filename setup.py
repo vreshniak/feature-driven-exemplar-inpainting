@@ -13,10 +13,11 @@ ext_modules = Extension(name="patchmatch",
 
 # Note: setup() has access to cmd arguments of the setup.py script via sys.argv
 setup(name="pm",
-	  ext_modules=cythonize(module_list=[ext_modules],force=True,annotate=False),
-	  # py_modules=["inpainting", "features", "utils"],
-	  packages=["imgproc"],
-	  package_dir={'imgproc': 'src'},
-	  author='Viktor Reshniak',
-      author_email='reshniakv@ornl.gov'
-      )
+	ext_modules=cythonize(module_list=[ext_modules],force=True,annotate=False),
+	# py_modules=["inpainting", "features", "utils"],
+	version='0.1.0',
+	packages=["imgproc"],
+	package_dir={'imgproc': 'src'},
+	author='Viktor Reshniak',
+	author_email='reshniakv@ornl.gov'
+	)
