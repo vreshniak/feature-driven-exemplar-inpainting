@@ -1,8 +1,4 @@
-import sys
-import os
 from pathlib import Path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
 
 from skimage.exposure  import rescale_intensity
 from skimage.color     import grey2rgb, rgb2grey
@@ -14,10 +10,8 @@ from skimage           import img_as_uint, img_as_float
 import matplotlib.pyplot as plt
 import numpy as np
 
-import inpainting as inp
-import features   as feat
-import utils      as op
-
+from   inpainting import Inpainting
+import inpainting.utils as op
 
 
 
@@ -106,7 +100,7 @@ collage = []
 
 for sigma in sigmas:
 	patch_weight = op.gauss_weight(patch_shape,patch_sigma=sigma).reshape(patch_shape)
-	problem = inp.inpainting(image, mask, as_gray=False, kernels=[[[1]]], lambdas=[1], patch_shape=patch_shape, patch_weight=patch_weight)
+	problem = Inpainting(image, mask, as_gray=False, kernels=[[[1]]], lambdas=[1], patch_shape=patch_shape, patch_weight=patch_weight)
 	nlmeans = problem.process(num_scales=1, initialization=initialization, TOL=TOL)
 	collage.append(op.add_patch(nlmeans,patch_weight))
 	# imsave(output_dir+"means_sig"+str(sigma)+".png", op.add_patch(result,patch_weight))
@@ -128,7 +122,7 @@ for moll_sig in moll_sigmas:
 	lambdas = [1,1]
 	for sigma in sigmas:
 		patch_weight = op.gauss_weight(patch_shape,patch_sigma=sigma).reshape(patch_shape)
-		problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
+		problem = Inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
 		result  = problem.process(num_scales=1, initialization=initialization, TOL=TOL, max_iters=30)
 		collage.append(op.add_patch(result,patch_weight))
 		# imsave(output_dir+"poisson_sig"+str(sigma)+".png", op.add_patch(result,patch_weight))
@@ -142,7 +136,7 @@ for moll_sig in moll_sigmas:
 		lambdas = [1-lmd, 1-lmd, lmd]
 		for sigma in sigmas:
 			patch_weight = op.gauss_weight(patch_shape,patch_sigma=sigma).reshape(patch_shape)
-			problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
+			problem = Inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
 			result  = problem.process(num_scales=1, initialization=initialization, TOL=TOL)
 			collage.append(op.add_patch(result,patch_weight))
 			# imsave(output_dir+"poisson_means_sig"+str(sigma)+".png", result)
@@ -151,7 +145,7 @@ for moll_sig in moll_sigmas:
 
 		for sigma in sigmas:
 			patch_weight = op.gauss_weight(patch_shape,patch_sigma=sigma).reshape(patch_shape)
-			problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels)
+			problem = Inpainting(image, mask, as_gray=False, kernels=kernels)
 			problem.add_feature(mask, None, lambdas=[1]*(len(kernels)-1)+[0.0], beta=1.-lmd, patch_shape=patch_shape, patch_weight=patch_weight)
 			problem.add_feature(mask, None, lambdas=[0]*(len(kernels)-1)+[1.0], beta=lmd,    patch_shape=patch_shape, patch_weight=patch_weight)
 			result  = problem.process(num_scales=1, initialization=initialization, TOL=TOL)
@@ -182,7 +176,7 @@ for moll_sig in moll_sigmas:
 	for sigma in sigmas:
 		kernels = mollify_kernels(op.nonlocal_grad_kernels(size=patch_shape[0], sigma=sigma), moll_sig)
 		lambdas = [1]*len(kernels)
-		problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=(1,1))
+		problem = Inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=(1,1))
 		result  = problem.process(num_scales=1, initialization=initialization, TOL=TOL, max_iters=30)
 		collage.append(result)
 		# imsave(output_dir+"gamma_poisson_sig"+str(sigma)+".png", result)
@@ -197,7 +191,7 @@ for moll_sig in moll_sigmas:
 		for sigma in sigmas:
 			kernels = mollify_kernels(op.nonlocal_grad_kernels(size=patch_shape[0], sigma=sigma), moll_sig) + [[[1]]]
 			lambdas = [1-lmd]*(len(kernels)-1) + [lmd]
-			problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=(1,1))
+			problem = Inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=(1,1))
 			result  = problem.process(num_scales=1, initialization=initialization, TOL=TOL)
 			collage.append(result)
 			# imsave(output_dir+"gamma_poisson_means_sig"+str(sigma)+".png", result)
@@ -206,7 +200,7 @@ for moll_sig in moll_sigmas:
 
 		for sigma in sigmas:
 			kernels = mollify_kernels(op.nonlocal_grad_kernels(size=patch_shape[0], sigma=sigma), moll_sig) + [[[1]]]
-			problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels)
+			problem = Inpainting(image, mask, as_gray=False, kernels=kernels)
 			problem.add_feature(mask, None, lambdas=[1]*(len(kernels)-1)+[0.0], beta=1.-lmd, patch_shape=(1,1))
 			problem.add_feature(mask, None, lambdas=[0]*(len(kernels)-1)+[1.0], beta=lmd,    patch_shape=patch_shape, patch_weight=patch_weight)
 			result  = problem.process(num_scales=1, initialization=initialization, TOL=TOL)

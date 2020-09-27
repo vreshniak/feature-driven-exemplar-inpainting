@@ -1,5 +1,9 @@
 #!/bin/bash
 
+python -m pip install git+https://github.com/vreshniak/feature-driven-exemplar-inpainting.git
+exit
+
+
 # compilers
 # gcc=gcc-8
 gcc=gcc

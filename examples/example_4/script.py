@@ -1,8 +1,4 @@
-import sys
-import os
 from pathlib import Path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
 
 from skimage.exposure  import rescale_intensity
 from skimage.color     import grey2rgb, rgb2grey
@@ -15,9 +11,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.ndimage as ndi
 
-import inpainting as inp
-import features   as feat
-import utils      as op
+from   inpainting import Inpainting
+import inpainting.utils as op
+
+
+#############################################################################
 
 
 
@@ -26,8 +24,6 @@ def mollify_kernels(kernels, sigma):
 	if sigma==0: return kernels
 	gauss = op.gauss2d(sigma=(sigma,sigma), order=(0,0), angle=0, nstd=0.67, normalize=True)
 	return [ correlate2d(np.array(ker), np.array(gauss), mode='full') for ker in kernels ]
-
-
 
 
 
@@ -130,7 +126,7 @@ imsave(output_dir+"color_edges.png", color_edges)
 # Local PDE inpainting with edge completion
 
 img = image.copy()
-inp.inpainting.inpaint_PDE(None, np.moveaxis(img,-1,0), mask, 'harmonic', edge_coef)
+Inpainting.inpaint_PDE(None, np.moveaxis(img,-1,0), mask, 'harmonic', edge_coef)
 imsave(output_dir+"harmonic_edges.png", img)
 # exit()
 
@@ -140,14 +136,14 @@ init_image = img_as_float(imread('./output/harmonic_edges.png')[:,:,0:3])
 ############################################################################
 # Patch nonlocal means
 
-problem = inp.inpainting(image, mask, as_gray=False, kernels=[[[1]]], lambdas=[1.0], patch_shape=patch_shape, patch_weight=patch_weight)
+problem = Inpainting(image, mask, as_gray=False, kernels=[[[1]]], lambdas=[1.0], patch_shape=patch_shape, patch_weight=patch_weight)
 result  = problem.process(num_scales=1, initialization=init_image, TOL=TOL, debug=False)
 imsave(output_dir+"nlmeans.png", op.add_patch(result, patch_weight))
 # exit()
 
 
 # disjoint models
-problem = inp.inpainting(image, mask, as_gray=False, kernels=[[[1]]])
+problem = Inpainting(image, mask, as_gray=False, kernels=[[[1]]])
 problem.add_feature(terrain, terrain, lambdas=[1.0], beta=1.0, patch_shape=patch_shape, patch_weight=patch_weight)
 problem.add_feature(house,   house,   lambdas=[1.0], beta=1.0, patch_shape=patch_shape, patch_weight=op.gauss_weight(patch_shape,patch_sigma=100))
 result = problem.process(num_scales=1, initialization=init_image, TOL=TOL, debug=False)
@@ -166,13 +162,13 @@ for moll_sig in [0]:
 	for lmd in [0.2]:
 		kernels = mollify_kernels(op.grad_kernels("forward"), moll_sig) + [[[1]]]
 
-		problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=[edge_coef, edge_coef, lmd], patch_shape=patch_shape, patch_weight=patch_weight)
+		problem = Inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=[edge_coef, edge_coef, lmd], patch_shape=patch_shape, patch_weight=patch_weight)
 		result  = problem.process(num_scales=1, initialization=init_image, TOL=TOL, debug=False)
 		fname   = output_dir+"/sm"+str(moll_sig)+"_nlpoisson_edges_lmd"+str(lmd)
 		imsave(fname.replace('.','')+".png", op.add_patch(result, patch_weight))
 
 		# disjoint models
-		problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels)
+		problem = Inpainting(image, mask, as_gray=False, kernels=kernels)
 		problem.add_feature(terrain, terrain, lambdas=[0.0, 0.0, 1.0],     beta=1.0, patch_shape=patch_shape, patch_weight=patch_weight)
 		problem.add_feature(house,   house,   lambdas=[edge_coef]*2+[lmd], beta=1.0, patch_shape=patch_shape, patch_weight=op.gauss_weight(patch_shape,patch_sigma=100))
 		result = problem.process(num_scales=1, initialization=init_image, TOL=TOL, debug=False)

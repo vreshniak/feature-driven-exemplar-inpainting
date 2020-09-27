@@ -1,7 +1,7 @@
-import sys
-import os
+# import sys
+# import os
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 from pathlib import Path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
 from skimage.color      import grey2rgb
 from skimage.transform  import resize
@@ -15,13 +15,8 @@ import scipy.ndimage as ndi
 import matplotlib.pyplot as plt
 import numpy as np
 
-import inpainting as inp
-import features   as feat
-import utils      as op
-# import imgproc.inpainting as inp
-# import imgproc.features   as feat
-# import imgproc.utils      as op
-
+from   inpainting import Inpainting
+import inpainting.utils as op
 
 
 #############################################################################
@@ -109,11 +104,11 @@ imsave("./output/example_setup.png", op.add_patch(image_setup, op.gauss_weight((
 # Local PDE inpainting
 
 img = image.copy()
-inp.inpainting.inpaint_PDE(None, img, make_mask(patch_shape), 'harmonic')
+Inpainting.inpaint_PDE(None, img, make_mask(patch_shape), 'harmonic')
 imsave("./output/harmonic_PDE.png", img)
 
 img = image.copy()
-inp.inpainting.inpaint_PDE(None, img, make_mask(patch_shape), 'biharmonic')
+Inpainting.inpaint_PDE(None, img, make_mask(patch_shape), 'biharmonic')
 imsave("./output/biharmonic_PDE.png", img)
 # exit()
 
@@ -126,11 +121,11 @@ kernels = [[[1]]]
 lambdas = [1]
 
 
-problem = inp.inpainting(step_image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
+problem = Inpainting(step_image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
 result  = problem.process(num_scales=1, initialization='random' )
 imsave("./output/step_means.png", op.add_patch(result, patch_weight))
 
-problem = inp.inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
+problem = Inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
 result  = problem.process(num_scales=1, initialization='biharmonic' )
 imsave("./output/means.png", op.add_patch(result, patch_weight))
 # exit()
@@ -145,11 +140,11 @@ kernels = op.grad_kernels("forward") + [[[1]]]
 lambdas = [1.0,1.0,0.0]
 
 
-problem = inp.inpainting(step_image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
+problem = Inpainting(step_image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
 result  = problem.process(num_scales=1, initialization='random' )
 imsave("./output/step_poiss.png", op.add_patch(result, patch_weight))
 
-problem = inp.inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
+problem = Inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
 result  = problem.process(num_scales=1, initialization='biharmonic' )
 imsave("./output/poiss.png", op.add_patch(result, patch_weight))
 # exit()
@@ -161,11 +156,11 @@ imsave("./output/poiss.png", op.add_patch(result, patch_weight))
 kernels = op.laplacian_kernel() + [[[1]]]
 lambdas = [1.0,0.0]
 
-problem = inp.inpainting(step_image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, patch_shape=patch_shape, patch_weight=patch_weight, lambdas=lambdas, nnf_field=nnf_field)
+problem = Inpainting(step_image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, patch_shape=patch_shape, patch_weight=patch_weight, lambdas=lambdas, nnf_field=nnf_field)
 result  = problem.process(num_scales=1, initialization='biharmonic' )
 imsave("./output/step_biharm.png", op.add_patch(result, patch_weight))
 
-problem = inp.inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, patch_shape=patch_shape, patch_weight=patch_weight, lambdas=lambdas, nnf_field=nnf_field)
+problem = Inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, patch_shape=patch_shape, patch_weight=patch_weight, lambdas=lambdas, nnf_field=nnf_field)
 result  = problem.process(num_scales=1, initialization='biharmonic' )
 imsave("./output/biharm.png", op.add_patch(result, patch_weight))
 # exit()
@@ -205,13 +200,13 @@ color_edges[np.logical_and(edges==1,mask),0] = 1.0
 imsave("./output/color_edges.png", color_edges)
 
 img = image.copy()
-inp.inpainting.inpaint_PDE(None, img, make_mask(patch_shape), 'harmonic', aniso_coef=coef)
+Inpainting.inpaint_PDE(None, img, make_mask(patch_shape), 'harmonic', aniso_coef=coef)
 imsave("./output/step_harmonic_edges.png", img)
 
 
 kernels = op.grad_kernels("forward")
 lambdas = [coef,coef]
-problem = inp.inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
+problem = Inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
 result  = problem.process(num_scales=1, initialization='harmonic', init_coef=coef )
 imsave("./output/step_nonloc_harmonic_edges.png", op.add_patch(result, patch_weight))
 # exit()
@@ -233,13 +228,13 @@ color_edges[np.logical_and(edges==1,mask),0] = 1.0
 imsave("./output/color_edges_2.png", color_edges)
 
 img = image.copy()
-inp.inpainting.inpaint_PDE(None, img, make_mask(patch_shape), 'harmonic', aniso_coef=coef)
+Inpainting.inpaint_PDE(None, img, make_mask(patch_shape), 'harmonic', aniso_coef=coef)
 imsave("./output/step_harmonic_edges_2.png", img)
 
 
 kernels = op.grad_kernels("forward")
 lambdas = [coef,coef]
-problem = inp.inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
+problem = Inpainting(image, make_mask(patch_shape,kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight, nnf_field=nnf_field)
 result  = problem.process(num_scales=1, initialization='harmonic', init_coef=coef )
 imsave("./output/step_nonloc_harmonic_edges_2.png", op.add_patch(result, patch_weight))
 # exit()
@@ -252,7 +247,7 @@ for ker_size in [31]:
 		kernels = op.nonlocal_grad_kernels(size=ker_size, s=s)
 		lambdas = [1.0]*len(kernels)
 
-		problem = inp.inpainting(image, make_mask((1,1),kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=(1,1), nnf_field=None)
+		problem = Inpainting(image, make_mask((1,1),kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=(1,1), nnf_field=None)
 		result  = problem.process(num_scales=1, initialization='biharmonic' )
 		imsave("./output/k"+str(ker_size)+"_s"+str(s).replace('.','')+".png", op.add_patch(result, patch_weight))
 
@@ -260,7 +255,7 @@ for ker_size in [31]:
 		kernels = op.nonlocal_grad_kernels(size=ker_size, sigma=sigma)
 		lambdas = [1.0]*len(kernels)
 
-		problem = inp.inpainting(image, make_mask((1,1),kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=(1,1), nnf_field=None)
+		problem = Inpainting(image, make_mask((1,1),kernels), as_gray=True, kernels=kernels, lambdas=lambdas, patch_shape=(1,1), nnf_field=None)
 		result  = problem.process(num_scales=1, initialization='biharmonic' )
 		imsave("./output/k"+str(ker_size)+"_sig"+str(sigma)+".png", op.add_patch(result, patch_weight))
 # exit()

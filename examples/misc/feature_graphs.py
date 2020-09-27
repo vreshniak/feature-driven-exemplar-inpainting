@@ -12,7 +12,7 @@ from skimage.draw import line_aa
 from skimage.color import rgb2grey
 from sklearn.feature_extraction.image import extract_patches_2d
 
-import imgproc.util as op
+import inpainting.utils as op
 
 _im_dtype     = np.float32
 _NN_algorithm = "FLANN"

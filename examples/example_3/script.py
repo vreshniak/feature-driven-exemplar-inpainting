@@ -1,8 +1,4 @@
-import sys
-import os
 from pathlib import Path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
 
 from skimage.color import grey2rgb
 from skimage.io import imread, imsave
@@ -13,9 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.ndimage as ndi
 
-import inpainting as inp
-import features   as feat
-import utils      as op
+from   inpainting import Inpainting
+import inpainting.utils as op
 
 
 #############################################################################
@@ -120,7 +115,7 @@ imsave("./output/color_edges.png", color_edges)
 
 kernels = [[[1]]]
 lambdas = [1]
-problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
+problem = Inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
 result  = problem.process(num_scales=1, initialization='harmonic', TOL=TOL)
 imsave("./output/means.png", op.add_patch(result, patch_weight))
 # exit()
@@ -130,13 +125,13 @@ imsave("./output/means.png", op.add_patch(result, patch_weight))
 # Local PDE inpainting
 
 harmonic = image.copy()
-inp.inpainting.inpaint_PDE(None, np.moveaxis(harmonic,-1,0), mask, 'harmonic')
+Inpainting.inpaint_PDE(None, np.moveaxis(harmonic,-1,0), mask, 'harmonic')
 imsave("./output/harmonic.png", harmonic)
 # exit()
 
 # with edge completion
 harmonic_edges = image.copy()
-inp.inpainting.inpaint_PDE(None, np.moveaxis(harmonic_edges,-1,0), mask, 'harmonic', edge_coef)
+Inpainting.inpaint_PDE(None, np.moveaxis(harmonic_edges,-1,0), mask, 'harmonic', edge_coef)
 imsave("./output/harmonic_edges.png", harmonic_edges)
 # exit()
 
@@ -146,7 +141,7 @@ imsave("./output/harmonic_edges.png", harmonic_edges)
 
 kernels = op.grad_kernels("forward")
 lambdas = [1.0,1.0]
-problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
+problem = Inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
 result  = problem.process(num_scales=1, initialization=harmonic, TOL=TOL)
 imsave("./output/nonloc_harmonic.png", op.add_patch(result, patch_weight))
 # exit()
@@ -154,7 +149,7 @@ imsave("./output/nonloc_harmonic.png", op.add_patch(result, patch_weight))
 # with edge completion
 kernels = op.grad_kernels("forward")
 lambdas = [edge_coef,edge_coef]
-problem = inp.inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
+problem = Inpainting(image, mask, as_gray=False, kernels=kernels, lambdas=lambdas, patch_shape=patch_shape, patch_weight=patch_weight)
 result  = problem.process(num_scales=1, initialization=harmonic_edges, TOL=TOL)
 imsave("./output/nonloc_harmonic_edges.png", op.add_patch(result, patch_weight))
 # exit()

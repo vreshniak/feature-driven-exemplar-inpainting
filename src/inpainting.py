@@ -16,8 +16,8 @@ from skimage.io import imread, imsave
 from skimage.color import rgb2grey, rgba2rgb, grey2rgb
 
 
-import utils    as op
-import features as ft
+import inpainting.utils    as op
+import inpainting.features as ft
 
 
 _im_dtype = np.float64
@@ -54,7 +54,7 @@ def read_image(img, as_gray):
 
 
 
-class inpainting:
+class Inpainting:
 
 	# def __init__(self, image_file_name, mask_file_name, source_mask_file_name=None, as_gray=False, kernels=None, lambdas=None, patch_shape=(3,3), patch_weight=None, patch_sigma=None):
 	def __init__(self, image, mask, source_mask=None, as_gray=False, kernels=None, lambdas=None, patch_shape=(3,3), patch_weight=None, patch_sigma=None, nn_algorithm='PatchMatch', nnf_field=None):

@@ -9,7 +9,7 @@ from sklearn.feature_extraction.image import extract_patches_2d
 # from sklearn.neighbors import NearestNeighbors
 # import pyflann    as flann
 import patchmatch as pm
-import utils as op
+import inpainting.utils as op
 
 
 _im_dtype = np.float64

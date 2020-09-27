@@ -1,4 +1,6 @@
 output
 lib
+build
+*egg-info*
 *debug*
 __pycache__
