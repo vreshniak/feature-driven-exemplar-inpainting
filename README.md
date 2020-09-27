@@ -4,9 +4,7 @@
 This is the implementation of our paper on Feature-Driven Exemplar-Based image inpainting
 
 ## Requirements
-gcc
-
-imagemagick
+gcc / clang
 
 
 ## Installation
