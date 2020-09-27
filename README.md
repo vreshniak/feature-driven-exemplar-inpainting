@@ -11,7 +11,7 @@ imagemagick
 
 ## Installation
 ```
-source ./install.sh [install_path]
+python -m pip install git+https://github.com/vreshniak/feature-driven-exemplar-inpainting.git
 ```
 
 ## Citation
