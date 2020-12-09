@@ -1,5 +1,5 @@
 # A Nonlocal Feature-Driven Exemplar-Based Approach For Image Inpainting
-### [arXiv](https://arxiv.org/abs/1909.09301) [paper](https://epubs.siam.org/doi/abs/10.1137/20M1317864) 
+### [arXiv](https://arxiv.org/abs/1909.09301) | [paper](https://epubs.siam.org/doi/abs/10.1137/20M1317864) 
 
 This is the implementation of our paper on Feature-Driven Exemplar-Based image inpainting
 
